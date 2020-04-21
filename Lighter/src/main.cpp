@@ -222,7 +222,6 @@ namespace {
                     request.target.GetQuery()
                 );
                 Leds::FlashBang(
-                    ledParams.brightness,
                     ledParams.red,
                     ledParams.green,
                     ledParams.blue

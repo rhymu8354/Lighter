@@ -10,7 +10,6 @@
 namespace Leds {
 
     void FlashBang(
-        uint8_t brightness,
         uint8_t red,
         uint8_t green,
         uint8_t blue
@@ -21,21 +20,21 @@ namespace Leds {
         }
         flashBangFuture = std::async(
             std::launch::async,
-            [&]{
+            [red, green, blue]{
                 static const struct {
                     size_t milliseconds;
                     uint8_t brightness;
                 } script[] = {
                     {0, 31},
                     {250, 8},
-                    {100, 7},
-                    {100, 6},
-                    {100, 5},
-                    {100, 4},
-                    {100, 3},
-                    {100, 2},
-                    {100, 1},
-                    {100, 0},
+                    {50, 7},
+                    {50, 6},
+                    {50, 5},
+                    {50, 4},
+                    {50, 3},
+                    {50, 2},
+                    {50, 1},
+                    {50, 0},
                 };
                 constexpr auto numSteps = sizeof(script) / sizeof(*script);
                 for (size_t i = 0; i < numSteps; ++i) {
