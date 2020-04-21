@@ -102,7 +102,7 @@ namespace Leds {
         uint8_t red,
         uint8_t green,
         uint8_t blue
-    {
+    ) {
         if (!SetLeds(brightness, red, green, blue)) {
             fprintf(stderr, "FeelsBadMan\n");
         }
