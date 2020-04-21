@@ -33,14 +33,13 @@ namespace {
             tx[i * 4 + 7] = red;
         }
         std::vector< uint8_t > rx(tx.size());
-        struct spi_ioc_transfer tr = {
-            .tx_buf = (unsigned long)tx.data(),
-            .rx_buf = (unsigned long)rx.data(),
-            .len = tx.size(),
-            .delay_usecs = 0,
-            .speed_hz = speed,
-            .bits_per_word = bits,
-        };
+        struct spi_ioc_transfer tr;
+        tr.tx_buf = (unsigned long)tx.data();
+        tr.rx_buf = (unsigned long)rx.data();
+        tr.len = tx.size();
+        tr.delay_usecs = 0;
+        tr.speed_hz = speed;
+        tr.bits_per_word = bits;
 
         int fd = open("/dev/spidev0.0", O_RDWR);
         if (fd < 0) {
