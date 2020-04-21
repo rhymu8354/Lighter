@@ -1,0 +1,76 @@
+# Lighter
+
+This is a stand-alone program which runs an HTTP server allowing clients to
+control an LED strip.
+
+## Usage
+
+    Usage: Lighter
+
+    Run the HTTP server until SIGINT is signalled (Ctrl+C pressed).
+
+## Supported platforms / recommended toolchains
+
+This is a portable C++11 program which depends only on the C++11 compiler, the
+C and C++ standard libraries, and other C++11 libraries with similar
+dependencies, so it should be supported on almost any platform.  The following
+are recommended toolchains for popular platforms.
+
+* Windows -- [Visual Studio](https://www.visualstudio.com/) (Microsoft Visual C++)
+* Linux -- clang or gcc
+* MacOS -- Xcode (clang)
+
+## Building
+
+This application may stand alone or be included in a larger project which uses
+[CMake](https://cmake.org/) to generate the build system and provide the
+application with its dependencies.
+
+There are two distinct steps in the build process:
+
+1. Generation of the build system, using CMake
+2. Compiling, linking, etc., using CMake-compatible toolchain
+
+### Prerequisites
+
+* [CMake](https://cmake.org/) version 3.8 or newer
+* C++11 toolchain compatible with CMake for your development platform (e.g.
+  [Visual Studio](https://www.visualstudio.com/) on Windows)
+* [O9KClock](https://github.com/rhymu8354/O9KClock.git) - a library which
+  implements a high-precision real-time clock, by combining the separate
+  real-time and high-precision clocks provided by the operating system.
+* [Http](https://github.com/rhymu8354/Http.git) - a library which implements
+  [RFC 7230](https://tools.ietf.org/html/rfc7230), "Hypertext Transfer Protocol
+  (HTTP/1.1): Message Syntax and Routing".
+* [HttpNetworkTransport](https://github.com/rhymu8354/HttpNetworkTransport.git) -
+  a library which implements the transport interfaces needed by the `Http`
+  library, in terms of the network endpoint and connection abstractions
+  provided by the `SystemAbstractions` library.
+* [StringExtensions](https://github.com/rhymu8354/StringExtensions.git) - a
+  library containing C++ string-oriented libraries, many of which ought to be
+  in the standard library, but aren't.
+* [SystemAbstractions](https://github.com/rhymu8354/SystemAbstractions.git) - a
+  cross-platform adapter library for system services whose APIs vary from one
+  operating system to another
+* [Timekeeping](https://github.com/rhymu8354/Timekeeping.git) - a library
+  of classes and interfaces dealing with tracking time and scheduling work
+
+### Build system generation
+
+Generate the build system using [CMake](https://cmake.org/) from the solution root.  For example:
+
+```bash
+mkdir build
+cd build
+cmake -G "Visual Studio 15 2017" -A "x64" ..
+```
+
+### Compiling, linking, et cetera
+
+Either use [CMake](https://cmake.org/) or your toolchain's IDE to build.
+For [CMake](https://cmake.org/):
+
+```bash
+cd build
+cmake --build . --config Release
+```
