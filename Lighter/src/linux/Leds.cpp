@@ -103,14 +103,18 @@ namespace Leds {
         uint8_t green,
         uint8_t blue
     ) {
-        if (!SetLeds(brightness, red, green, blue)) {
-            fprintf(stderr, "FeelsBadMan\n");
+        if (SetLeds(brightness, red, green, blue)) {
+            printf("I turned them on, sir!\n");
+        } else {
+            fprintf(stderr, "Can't turn them ON!  FeelsBadMan\n");
         }
     }
 
     void TurnOff() {
-        if (!SetLeds(0, 0, 0, 0)) {
-            fprintf(stderr, "FeelsBadMan\n");
+        if (SetLeds(0, 0, 0, 0)) {
+            printf("OFF now!\n");
+        } else {
+            fprintf(stderr, "What?  Can't turn it off!  FeelsBadMan\n");
         }
     }
 
