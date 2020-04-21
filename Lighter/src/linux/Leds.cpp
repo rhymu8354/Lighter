@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <vector>
@@ -34,6 +35,7 @@ namespace {
         }
         std::vector< uint8_t > rx(tx.size());
         struct spi_ioc_transfer tr;
+        (void)memset(&tr, 0, sizeof(tr));
         tr.tx_buf = (unsigned long)tx.data();
         tr.rx_buf = (unsigned long)rx.data();
         tr.len = tx.size();
