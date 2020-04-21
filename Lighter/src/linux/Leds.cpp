@@ -97,8 +97,13 @@ namespace {
 
 namespace Leds {
 
-    void TurnOn() {
-        if (!SetLeds(4, 0xFF, 0x22, 0x22)) {
+    void TurnOn(
+        uint8_t brightness,
+        uint8_t red,
+        uint8_t green,
+        uint8_t blue
+    {
+        if (!SetLeds(brightness, red, green, blue)) {
             fprintf(stderr, "FeelsBadMan\n");
         }
     }

@@ -16,6 +16,7 @@
 
 #include <Http/Server.hpp>
 #include <HttpNetworkTransport/HttpServerNetworkTransport.hpp>
+#include <inttypes.h>
 #include <SystemAbstractions/DiagnosticsSender.hpp>
 #include <SystemAbstractions/DiagnosticsStreamReporter.hpp>
 #include <SystemAbstractions/NetworkConnection.hpp>
@@ -24,6 +25,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <StringExtensions/StringExtensions.hpp>
 #include <thread>
 
 namespace {
@@ -133,12 +135,46 @@ namespace {
                 std::shared_ptr< Http::Connection > connection,
                 const std::string& trailer
             ){
-                Leds::TurnOn();
+                const auto params = StringExtensions::Split(
+                    request.target.GetQuery(),
+                    "&"
+                );
+                uint8_t brightness = 0;
+                uint8_t red = 0;
+                uint8_t green = 0;
+                uint8_t blue = 0;
+                std::ostringstream buf;
+                buf << "Query: " << request.target.GetQuery() << "\r\n";
+                for (const auto& param: params) {
+                    const auto keyValue = StringExtensions::Split(param, "=");
+                    if (keyValue.size() < 2) {
+                        continue;
+                    }
+                    const auto& key = keyValue[0];
+                    const auto& value = keyValue[1];
+                    buf << "  " << key << " = " << value << "\r\n";
+                    if (key == "b") {
+                        (void)sscanf(value.c_str(), "%" SCNu8, &brightness);
+                        buf << "brightness: " << (int)brightness << "\r\n";
+                    } else if (key == "c") {
+                        (void)sscanf(
+                            value.c_str(),
+                            "%2" SCNx8 "%2" SCNx8 "%2" SCNx8,
+                            &red,
+                            &green,
+                            &blue
+                        );
+                        buf << "red: " << (int)red << "\r\n";
+                        buf << "green: " << (int)green << "\r\n";
+                        buf << "blue: " << (int)blue << "\r\n";
+                    }
+                }
+                Leds::TurnOn(brightness, red, green, blue);
                 Http::Response response;
                 response.statusCode = 200;
                 response.reasonPhrase = "OK";
                 response.headers.SetHeader("Content-Type", "text/plain");
-                response.body = "PogChamp\r\n";
+                response.body = buf.str();
                 return response;
             }
         );
