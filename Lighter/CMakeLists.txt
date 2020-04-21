@@ -9,7 +9,18 @@ set(Sources
     src/main.cpp
     src/TimeKeeper.cpp
     src/TimeKeeper.hpp
+    src/Leds.hpp
 )
+
+if(UNIX AND NOT APPLE)
+    list(APPEND Sources
+        src/linux/Leds.cpp
+    )
+else(UNIX AND NOT APPLE)
+    list(APPEND Sources
+        src/stubs/Leds.cpp
+    )
+endif(UNIX AND NOT APPLE)
 
 add_executable(${This} ${Sources})
 set_target_properties(${This} PROPERTIES

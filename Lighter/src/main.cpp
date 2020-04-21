@@ -7,6 +7,7 @@
  * © 2020 by Richard Walters
  */
 
+#include "Leds.hpp"
 #include "TimeKeeper.hpp"
 
 #ifdef _WIN32
@@ -126,17 +127,34 @@ namespace {
         Http::Server& http
     ) {
         http.RegisterResource(
-            {},
+            {"on"},
             [](
                 const Http::Request& request,
                 std::shared_ptr< Http::Connection > connection,
                 const std::string& trailer
             ){
+                Leds::TurnOn();
                 Http::Response response;
                 response.statusCode = 200;
                 response.reasonPhrase = "OK";
                 response.headers.SetHeader("Content-Type", "text/plain");
                 response.body = "PogChamp\r\n";
+                return response;
+            }
+        );
+        http.RegisterResource(
+            {"off"},
+            [](
+                const Http::Request& request,
+                std::shared_ptr< Http::Connection > connection,
+                const std::string& trailer
+            ){
+                Leds::TurnOff();
+                Http::Response response;
+                response.statusCode = 200;
+                response.reasonPhrase = "OK";
+                response.headers.SetHeader("Content-Type", "text/plain");
+                response.body = "BibleThump\r\n";
                 return response;
             }
         );
