@@ -43,6 +43,7 @@ namespace {
 
         int fd = open("/dev/spidev0.0", O_RDWR);
         if (fd < 0) {
+            fprintf(stderr, "error opening SPI device\n");
             return false;
         }
 
@@ -59,6 +60,7 @@ namespace {
          */
         int ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
+            fprintf(stderr, "error setting SPI mode\n");
             return false;
         }
 
@@ -67,6 +69,7 @@ namespace {
          */
         ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
         if (ret == -1) {
+            fprintf(stderr, "error setting SPI bits per word\n");
             return false;
         }
 
@@ -75,6 +78,7 @@ namespace {
          */
         ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed);
         if (ret == -1) {
+            fprintf(stderr, "error setting SPI max speed\n");
             return false;
         }
 
@@ -82,7 +86,11 @@ namespace {
          * push data out the SPI to the light strip
          */
         ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-        return (ret >= 1);
+        if (ret < 1) {
+            fprintf(stderr, "error sending SPI data\n");
+            return false;
+        }
+        return true;
     }
 
 }
