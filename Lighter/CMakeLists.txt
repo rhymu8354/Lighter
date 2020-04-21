@@ -9,6 +9,7 @@ set(Sources
     src/main.cpp
     src/TimeKeeper.cpp
     src/TimeKeeper.hpp
+    src/Leds.cpp
     src/Leds.hpp
 )
 

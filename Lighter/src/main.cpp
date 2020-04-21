@@ -125,6 +125,49 @@ namespace {
         return http.Mobilize(httpDeps);
     }
 
+    struct LedParams {
+        uint8_t brightness = 0;
+        uint8_t red = 0;
+        uint8_t green = 0;
+        uint8_t blue = 0;
+
+        // For showing chat only (We ♥ you, chat!)
+        std::string responseBody;
+    };
+
+    LedParams ParseLedParams(const std::string& query) {
+        LedParams ledParams;
+        const auto params = StringExtensions::Split(query, "&");
+        std::ostringstream buf;
+        buf << "Query: " << query << "\r\n";
+        for (const auto& param: params) {
+            const auto keyValue = StringExtensions::Split(param, "=");
+            if (keyValue.size() < 2) {
+                continue;
+            }
+            const auto& key = keyValue[0];
+            const auto& value = keyValue[1];
+            buf << "  " << key << " = " << value << "\r\n";
+            if (key == "b") {
+                (void)sscanf(value.c_str(), "%" SCNu8, &ledParams.brightness);
+                buf << "brightness: " << (int)ledParams.brightness << "\r\n";
+            } else if (key == "c") {
+                (void)sscanf(
+                    value.c_str(),
+                    "%2" SCNx8 "%2" SCNx8 "%2" SCNx8,
+                    &ledParams.red,
+                    &ledParams.green,
+                    &ledParams.blue
+                );
+                buf << "red: " << (int)ledParams.red << "\r\n";
+                buf << "green: " << (int)ledParams.green << "\r\n";
+                buf << "blue: " << (int)ledParams.blue << "\r\n";
+            }
+        }
+        ledParams.responseBody = buf.str();
+        return ledParams;
+    }
+
     void RegisterTestResource(
         Http::Server& http
     ) {
@@ -135,46 +178,20 @@ namespace {
                 std::shared_ptr< Http::Connection > connection,
                 const std::string& trailer
             ){
-                const auto params = StringExtensions::Split(
-                    request.target.GetQuery(),
-                    "&"
+                const auto ledParams = ParseLedParams(
+                    request.target.GetQuery()
                 );
-                uint8_t brightness = 0;
-                uint8_t red = 0;
-                uint8_t green = 0;
-                uint8_t blue = 0;
-                std::ostringstream buf;
-                buf << "Query: " << request.target.GetQuery() << "\r\n";
-                for (const auto& param: params) {
-                    const auto keyValue = StringExtensions::Split(param, "=");
-                    if (keyValue.size() < 2) {
-                        continue;
-                    }
-                    const auto& key = keyValue[0];
-                    const auto& value = keyValue[1];
-                    buf << "  " << key << " = " << value << "\r\n";
-                    if (key == "b") {
-                        (void)sscanf(value.c_str(), "%" SCNu8, &brightness);
-                        buf << "brightness: " << (int)brightness << "\r\n";
-                    } else if (key == "c") {
-                        (void)sscanf(
-                            value.c_str(),
-                            "%2" SCNx8 "%2" SCNx8 "%2" SCNx8,
-                            &red,
-                            &green,
-                            &blue
-                        );
-                        buf << "red: " << (int)red << "\r\n";
-                        buf << "green: " << (int)green << "\r\n";
-                        buf << "blue: " << (int)blue << "\r\n";
-                    }
-                }
-                Leds::TurnOn(brightness, red, green, blue);
+                Leds::TurnOn(
+                    ledParams.brightness,
+                    ledParams.red,
+                    ledParams.green,
+                    ledParams.blue
+                );
                 Http::Response response;
                 response.statusCode = 200;
                 response.reasonPhrase = "OK";
                 response.headers.SetHeader("Content-Type", "text/plain");
-                response.body = buf.str();
+                response.body = ledParams.responseBody;
                 return response;
             }
         );
@@ -191,6 +208,30 @@ namespace {
                 response.reasonPhrase = "OK";
                 response.headers.SetHeader("Content-Type", "text/plain");
                 response.body = "BibleThump\r\n";
+                return response;
+            }
+        );
+        http.RegisterResource(
+            {"flash"},
+            [](
+                const Http::Request& request,
+                std::shared_ptr< Http::Connection > connection,
+                const std::string& trailer
+            ){
+                const auto ledParams = ParseLedParams(
+                    request.target.GetQuery()
+                );
+                Leds::FlashBang(
+                    ledParams.brightness,
+                    ledParams.red,
+                    ledParams.green,
+                    ledParams.blue
+                );
+                Http::Response response;
+                response.statusCode = 200;
+                response.reasonPhrase = "OK";
+                response.headers.SetHeader("Content-Type", "text/plain");
+                response.body = ledParams.responseBody;
                 return response;
             }
         );

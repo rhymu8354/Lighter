@@ -1,7 +1,11 @@
 #include "../Leds.hpp"
 
+#include <future>
 #include <inttypes.h>
+#include <memory>
 #include <stdio.h>
+#include <thread>
+#include <vector>
 
 namespace Leds {
 
