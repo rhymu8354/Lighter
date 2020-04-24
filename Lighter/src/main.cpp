@@ -269,6 +269,7 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
     Http::Server http;
+    http.SubscribeToDiagnostics(diagnosticsSender.Chain(), 0);
     if (!StartWebServer(http, diagnosticsSender)) {
         fprintf(stderr, "Error: unable to set up web server!\n");
         return EXIT_FAILURE;
