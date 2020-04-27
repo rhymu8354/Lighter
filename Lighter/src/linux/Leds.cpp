@@ -26,8 +26,8 @@ namespace {
         const uint8_t bits = 8;
         const uint32_t speed = 500000;
 
-        std::vector< uint8_t > tx(4 + 144*4 + 12);
-        for (size_t i = 0; i < 144; ++i) {
+        std::vector< uint8_t > tx(4 + 288*4 + 20);
+        for (size_t i = 0; i < 288; ++i) {
             tx[i * 4 + 4] = (0xE0 | brightness);
             tx[i * 4 + 5] = blue;
             tx[i * 4 + 6] = green;
