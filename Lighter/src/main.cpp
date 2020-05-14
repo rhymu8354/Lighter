@@ -122,6 +122,7 @@ namespace {
         transport->SubscribeToDiagnostics(diagnosticMessageSender.Chain(), 0);
         httpDeps.transport = transport;
         http.SetConfigurationItem("Port", "8080");
+        http.SetConfigurationItem("TooManyRequestsThreshold", "0.0");
         return http.Mobilize(httpDeps);
     }
 
